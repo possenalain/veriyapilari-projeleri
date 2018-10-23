@@ -508,7 +508,7 @@ void sifirla_rows(int *rowdegisen,int *rowdegismeyen,int *right_b,int r1,int r2,
 }//end or function
 
 /*function to scale a matrix row*/
-// Elif guzel bir kiz
+
 
 void scale(int *row,int *right_b,int r,int number,int hangi)
 {
