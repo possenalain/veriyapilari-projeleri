@@ -3,7 +3,7 @@
 void swap_rows(int *row1,int *row2,int *right_b,int r1,int r2,int number);
 void sifirla_rows(int *rowdegisen,int *rowdegismeyen,int *right_b,int r1,int r2,int number,int flag);
 void scale(int *row,int *right_b,int r,int number,int hangi);
-
+void yazdir(int *matris,int *b,int n);
 int main()
 {
     int graph_window=0;//choose among the too
@@ -263,16 +263,10 @@ int main()
 //an equation ready to be solved by Gaussian elimination
     int x,y;
     printf("\n\n\n\ eselon haline getirecegiz\n\n\n\n");
-//yazdirma
-    for(x=0; x<5; x++)
-    {
-        for(y=0; y<bilinmeyen_sayisi; y++)
-            printf("     %d     ",gauss_m[x][y]);
-
-        printf("     =====%d\t\n\n\n\n",b[x]);
-    }
-// yadirma
-
+    /*
+    YAZDIRMA
+    */
+    yazdir(&gauss_m[0][0],b,bilinmeyen_sayisi);
     for(i=0; i<5; i++)//eselon haline getir
     {
         int allzeros=0;//if the whole column under current is of zeros
@@ -285,16 +279,10 @@ int main()
                 {
                     swap_rows(gauss_m[i],gauss_m[j],b,i,j,bilinmeyen_sayisi);
                     allzeros=0;
-//yazdirma
-                    printf("\n\n\n\n");
-                    for(x=0; x<5; x++)
-                    {
-                        for(y=0; y<bilinmeyen_sayisi; y++)
-                            printf("     %d     ",gauss_m[x][y]);
-
-                        printf("     =====%d\t\n\n\n\n",b[x]);
-                    }
-// yazdirma
+                    /*
+                    YAZDIRMA
+                    */
+                    yazdir(&gauss_m[0][0],b,bilinmeyen_sayisi);
                     break;
                 }
             }
@@ -312,29 +300,21 @@ int main()
 
                 if(gauss_m[i][x]==0)
                 {
-
                     for(j=i; j<5; j++)
                     {
                         if(gauss_m[j][x]!=0)
                         {
-
                             swap_rows(gauss_m[i],gauss_m[j],b,i,j,bilinmeyen_sayisi);
                             int t,k;
                             done=1;
-//yazdirma
-                            printf(" \n\n\n\n");
-                            for(t=0; t<5; t++)
-                            {
-                                for(k=0; k<bilinmeyen_sayisi; k++)
-                                    printf("     %d     ",gauss_m[t][k]);
-                                printf("     =====%d\t\n\n\n\n",b[t]);
-                            }
-//yazdirma
+                            /*
+                            YAZDIRMA
+                            */
+                            yazdir(&gauss_m[0][0],b,bilinmeyen_sayisi);
 
                             break;
                         }
                     }
-
                 }
                 if(gauss_m[i][x]!=0)
                 {
@@ -351,20 +331,12 @@ int main()
                                 }
                                 if(gauss_m[y][x]==gauss_m[i][x])
                                 {
-
                                     sifirla_rows(gauss_m[y],gauss_m[i],b,y,i,bilinmeyen_sayisi,2);
                                 }
-
-//yazdirma
-                                printf("\n\n\n\n");
-                                int t,k;
-                                for(t=0; t<5; t++)
-                                {
-                                    for(k=0; k<bilinmeyen_sayisi; k++)
-                                        printf("     %d     ",gauss_m[t][k]);
-                                    printf("     =====%d\t\n\n\n\n",b[t]);
-                                }
-//yazdirma
+                                /*
+                                YAZDIRMA
+                                */
+                                yazdir(&gauss_m[0][0],b,bilinmeyen_sayisi);
                             }
                         }
                     }
@@ -392,18 +364,10 @@ int main()
                         {
                             sifirla_rows(gauss_m[j],gauss_m[i],b,j,i,bilinmeyen_sayisi,2);
                         }
-
-//yazdirma
-                        printf("\n\n\n\n");
-                        int t,k;
-                        for(t=0; t<5; t++)
-                        {
-                            for(k=0; k<bilinmeyen_sayisi; k++)
-                                printf("     %d     ",gauss_m[t][k]);
-
-                            printf("     =====%d\t\n\n\n\n",b[t]);
-                        }
-//yazdirma
+                        /*
+                        YAZDIRMA
+                        */
+                        yazdir(&gauss_m[0][0],b,bilinmeyen_sayisi);
                     }
                 }
             }
@@ -420,34 +384,47 @@ int main()
                 if(gauss_m[i][j]==-1)
                 {
                     scale(gauss_m[i],b,i,bilinmeyen_sayisi,j);
-//yazdirma
-                    printf("\n\n\n\n");
-                    int t,k;
-                    for(t=0; t<5; t++)
-                    {
-                        for(k=0; k<bilinmeyen_sayisi; k++)
-                            printf("     %d     ",gauss_m[t][k]);
-
-                        printf("     =====%d\t\n\n\n\n",b[t]);
-                    }
-//yazdirma
-
+                    /*
+                    YAZDIRMA
+                    */
+                    yazdir(&gauss_m[0][0],b,bilinmeyen_sayisi);
                 }
                 break;
             }
         }
     }
-//yazdirma
+    /*
+    */
     printf(" \n\n eselon indirgenmis hali\n\n");
+    /*
+    YAZDIRMA
+    */
+    yazdir(&gauss_m[0][0],b,bilinmeyen_sayisi);
+
+    printf(" \n\n\n --presenting the results--\n\n\n");
+    /*PRESENTING THE RESULTS*/
     for(t=0; t<5; t++)
     {
+        int buldum=0,name;
+        char sign=' ';
         for(k=0; k<bilinmeyen_sayisi; k++)
-            printf("     %d     ",gauss_m[t][k]);
+        {
+            if(gauss_m[t][k]!=0)
+            {
+                if(gauss_m[t][k]<0)
+                    sign=' ';
 
-        printf("     =====%d\t\n\n\n\n",b[t]);
+                name=bilinmeyen[k];
+                printf("%d%c  %c ",gauss_m[t][k],names[name],sign);
+                sign='+';
+                buldum=1;
+            }
+        }
+        if(buldum)
+            printf("\b\b =  %d\n\n",b[t]);
+        sign=' ';
     }
-//yazdirma
-
+//
     return 0;
 }
 /*
@@ -471,9 +448,7 @@ void swap_rows(int *row1,int *row2,int *right_b,int r1,int r2,int number)
 }//end or function
 
 /*
-
 function for swapping rows when necessary
-
 */
 void sifirla_rows(int *rowdegisen,int *rowdegismeyen,int *right_b,int r1,int r2,int number,int flag)
 {
@@ -485,7 +460,6 @@ void sifirla_rows(int *rowdegisen,int *rowdegismeyen,int *right_b,int r1,int r2,
         {
             toplam=rowdegisen[i]+rowdegismeyen[i];
             rowdegisen[i]=toplam;
-
         }
         if(flag==2)
         {
@@ -524,5 +498,18 @@ void scale(int *row,int *right_b,int r,int number,int hangi)
     }
 }//end or function
 /*function to display a matrix on the screen*/
+void yazdir(int *matris,int *b,int n)
+{
+    printf("\n\n\n\n");
+    int t,k,nere=0,nereb=0;
+    for(t=0; t<5; t++)
+    {
+        nere=t*n;
+        for(k=0; k<n; k++)
+        {
+            printf("     %d     ",*(matris+nere+k));
+        }
+        printf("     =====%d\t\n\n\n\n",b[t]);
+    }
 
-
+}
