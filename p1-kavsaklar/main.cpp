@@ -1,22 +1,74 @@
+#include<graphics.h>
 #include<stdio.h>
-
+#define ARROW_SIZE 5
+struct yol
+{
+    int x,y;
+    int hareket;
+};
+struct yol yollar[9];
+void yoluciz(int kacinci);
+void yon_hareketi(int x,int y,int hangisi);
 void swap_rows(int *row1,int *row2,int *right_b,int r1,int r2,int number);
 void sifirla_rows(int *rowdegisen,int *rowdegismeyen,int *right_b,int r1,int r2,int number,int flag);
 void scale(int *row,int *right_b,int r,int number,int hangi);
 void yazdir(int *matris,int *b,int n);
+int hangihareket(int index,int direction);
 int main()
 {
-    int graph_window=0;//choose among the too
+    /*
+    INITIALIZE THE GRAPHICS AND SELECT THE MAP
+    */
+    initwindow(1500,1000, "1. Proje-kavsaklar");
+    setcolor(4);
+    int x=getmaxx();
+    int y=getmaxy();
+    int current_x,current_y;
+    int circle_x,circle_y,radius_o,radius_i;
+    yoluciz(1);
+    yoluciz(2);
+
+    int selected=0;
+    while(!kbhit()||!selected)
+    {
+
+        if(ismouseclick(513))
+        {
+            if(mousex()<(getmaxx()/2)-50)
+            {
+                selected=1;
+            }
+            else if(mousex()>((getmaxx()/2)+50))
+            {
+                selected=2;
+            }
+            else
+            {
+                selected=0;
+            }
+            clearmouseclick(513);
+        }
+        /*
+        NE YOL SECILECEGINI MOUSE CLICK ILE SECILIR
+        */
+    }
+    getch();
+    cleardevice();
+    if(selected==1)//BIRINCI YOLU SECILMIS
+    {
+        yoluciz(3);
+    }
+    else //IKINCI INCI YOL SECILMIS
+    {
+        yoluciz(4);
+
+    }
     int roads,dimy=5,dimx=4;
     char names[]= {'A','B','C','D','W','X','Y','Z','T'};
     roads=8;
-    while(graph_window!=1&&graph_window!=2)
-    {
-        printf("\n\n Harita yi secin 1 ya da 2 :");
-        scanf("%d",&graph_window);
-    }
-// when the last road is active too
-    if(graph_window==2)
+// IF THE SECOND ROAD WAS SELECTED
+    printf("\nselected:%d\n\n",selected);
+    if(selected==2)
     {
         roads=9;
     }
@@ -114,6 +166,7 @@ int main()
                 denklem[4][i]=-yogunluk;
             }
         }
+        yon_hareketi(yollar[i].x,yollar[i].y,hangihareket(i,choice));
 //reset the values, for the next instantiation
         girisler=0;
         cikisler=0;
@@ -167,7 +220,7 @@ int main()
                 if(ilk==son)//A---A
                     gecerli=0;
 
-                if(((son-ilk!=1)&&(son-ilk!=-1)))//A---C C----D
+                if(((son-ilk!=1)&&(son-ilk!=-1)))//A---C or C----D
                     gecerli=0;
 
                 if(roads==9)
@@ -189,7 +242,10 @@ int main()
                         scanf("%d",&yogunluk);
                     }
                     deger[i]=yogunluk;
-
+                    /*
+                    SHOW IT'S MOVEMENT ACCORDINGLY
+                    */
+                    yon_hareketi(yollar[i].x,yollar[i].y,hangihareket(i,(son-ilk)));
                     int n;
 //put the values in draft equation array with their directions effects
                     for(a=0; a<4; a++)
@@ -210,7 +266,7 @@ int main()
                         }
                     }
                 }
-                if(!gecerli) //the direction is valid
+                if(!gecerli) // direction is valid
                 {
                     printf("\t--- yanlis yonu, tekrar giriniz\n");
                 }
@@ -223,7 +279,7 @@ int main()
         }
     }
     /*
-    CREATE THE FINE EQUATION READY FOR PROCESSING
+    CREATE THE FINE EQUATION READY TO BE PROCESSED
     */
     int bilinmeyen_sayisi=0;
     for(i=0; i<roads; i++)
@@ -261,7 +317,7 @@ int main()
             b[j]-=denklem[j][i];
     }
 //an equation ready to be solved by Gaussian elimination
-    int x,y;
+
     printf("\n\n\n\ eselon haline getirecegiz\n\n\n\n");
     /*
     YAZDIRMA
@@ -300,10 +356,12 @@ int main()
 
                 if(gauss_m[i][x]==0)
                 {
+
                     for(j=i; j<5; j++)
                     {
                         if(gauss_m[j][x]!=0)
                         {
+
                             swap_rows(gauss_m[i],gauss_m[j],b,i,j,bilinmeyen_sayisi);
                             int t,k;
                             done=1;
@@ -315,6 +373,7 @@ int main()
                             break;
                         }
                     }
+
                 }
                 if(gauss_m[i][x]!=0)
                 {
@@ -331,8 +390,10 @@ int main()
                                 }
                                 if(gauss_m[y][x]==gauss_m[i][x])
                                 {
+
                                     sifirla_rows(gauss_m[y],gauss_m[i],b,y,i,bilinmeyen_sayisi,2);
                                 }
+
                                 /*
                                 YAZDIRMA
                                 */
@@ -364,6 +425,7 @@ int main()
                         {
                             sifirla_rows(gauss_m[j],gauss_m[i],b,j,i,bilinmeyen_sayisi,2);
                         }
+
                         /*
                         YAZDIRMA
                         */
@@ -388,6 +450,7 @@ int main()
                     YAZDIRMA
                     */
                     yazdir(&gauss_m[0][0],b,bilinmeyen_sayisi);
+
                 }
                 break;
             }
@@ -425,6 +488,7 @@ int main()
         sign=' ';
     }
 //
+    getch();
     return 0;
 }
 /*
@@ -448,7 +512,11 @@ void swap_rows(int *row1,int *row2,int *right_b,int r1,int r2,int number)
 }//end or function
 
 /*
+
+
 function for swapping rows when necessary
+
+
 */
 void sifirla_rows(int *rowdegisen,int *rowdegismeyen,int *right_b,int r1,int r2,int number,int flag)
 {
@@ -513,3 +581,400 @@ void yazdir(int *matris,int *b,int n)
     }
 
 }
+
+/*
+YOLLAR CIZME FONKSIYONU
+*/
+void yoluciz(int kacinci)
+{
+    /*
+    1 A YOLLARI SECIM OLMADAN
+    2 B YOLLARI SECIM OLMADAN
+    3 A YOLLARI SECIM OLDUKTAN SONRA
+    4 B YOLLARI SECIM OLDUKTAN SONRA
+
+    */
+    int x=getmaxx();
+    int y=getmaxy();
+    int current_x,current_y;
+    //PENCERE YI 2 YE BOLELIM
+    //line(getmaxx()/2,0,getmaxx()/2,getmaxy());
+    printf("\nmaxx:%d",x);
+    printf("\nmaxy:%d",y);
+
+    int circle_x,circle_y,radius_o,radius_i;
+
+    if(kacinci==2)//IKINCI YOLU SECILMIS
+    {
+        settextstyle(9,HORIZ_DIR,2);
+        outtextxy(getmaxx()/2+50,50, "IKINCI YOL");
+        circle_x=3*(getmaxx()/4);
+        circle_y=getmaxy()/2+50;
+        radius_o=200;
+        radius_i=100;
+        current_x=circle_x;
+        current_y=circle_y;
+    }
+    if(kacinci==1)//BIRINCI YOL ICIN
+    {
+        settextstyle(9,HORIZ_DIR,2);
+        outtextxy(50,50, "BIRINCI YOL");
+        circle_x=getmaxx()/4;
+        circle_y=getmaxy()/2+50;
+        radius_o=200;
+        radius_i=100;
+
+
+        current_x=circle_x;
+        current_y=circle_y;
+
+    }
+    if(kacinci==3||kacinci==4)
+    {
+        circle_x=getmaxx()/2;
+        circle_y=getmaxy()/2+50;
+        radius_o=200;
+        radius_i=100;
+        circle(circle_x,circle_y,radius_o);
+        circle(circle_x,circle_y,radius_i);
+
+        floodfill(circle_x+(radius_i/2),(circle_y-radius_i),4);
+
+        current_x=circle_x;
+        current_y=circle_y;
+    }
+    if(kacinci==4)//IKINCI YOLU SECILMIS
+    {
+        outtextxy(getmaxx()/3,50, "IKINCI YOL SECILDI");
+        bar((current_x-300),(current_y-50),(current_x+300),(current_y+50));//LEFT-CENTRE-RIGTH
+        yollar[0].x=current_x-250;
+        yollar[0].y=current_y;
+
+        yollar[2].x=current_x+250;//RIGHT
+        yollar[2].y=current_y;
+
+        yollar[8].x=current_x;//T
+        yollar[8].y=current_y;
+        outtextxy(yollar[8].x,yollar[8].y,"T");
+    }
+    if(kacinci==3)//BIRINCI YOL SECILMIS
+    {
+        outtextxy(getmaxx()/3,50, "BIRINCI YOL SECILDI");
+        bar((current_x-300),(current_y-50),(current_x-100),(current_y+50));//LEFT
+        yollar[0].x=current_x-250;
+        yollar[0].y=current_y;
+
+        bar((current_x+100),(current_y-50),(current_x+300),(current_y+50));//RIGHT
+        yollar[2].x=current_x+250;
+        yollar[2].y=current_y;
+
+
+    }
+
+    radius_o=200;
+    radius_i=100;
+    circle(circle_x,circle_y,radius_o);
+    circle(circle_x,circle_y,radius_i);
+
+    floodfill(circle_x+(radius_i/2),(circle_y-radius_i),4);
+    bar((current_x-50),(current_y-300),(current_x+50),(current_y-100));//TOP
+    yollar[1].x=current_x;
+    yollar[1].y=current_y-250;
+
+    bar((current_x-50),(current_y+100),(current_x+50),(current_y+300));//BOTTOM
+    yollar[3].x=current_x;
+    yollar[3].y=current_y+250;
+
+    yollar[4].x=current_x-115;//W
+    yollar[4].y=current_y-115;
+
+    yollar[5].x=current_x+115;//X
+    yollar[5].y=current_y-115;
+
+    yollar[6].x=current_x+115;//Y
+    yollar[6].y=current_y+115;
+
+    yollar[7].x=current_x-115;//Z
+    yollar[7].y=current_y+115;
+    if(kacinci==1)
+    {
+        bar((current_x-300),(current_y-50),(current_x-100),(current_y+50));//LEFT
+        yollar[0].x=current_x-250;
+        yollar[0].y=current_y;
+
+        bar((current_x+100),(current_y-50),(current_x+300),(current_y+50));//RIGHT
+        yollar[2].x=current_x+250;
+        yollar[2].y=current_y;
+        current_x=getmaxx()/2;
+        bar(current_x-2,0,current_x+2,getmaxy());
+    }
+    if(kacinci==2)//IKINCI YOLU SECILMIS
+    {
+        bar((current_x-300),(current_y-50),(current_x+300),(current_y+50));//LEFT-CENTRE-RIGTH
+        yollar[0].x=current_x-250;
+        yollar[0].y=current_y;
+
+        yollar[2].x=current_x+250;//RIGHT
+        yollar[2].y=current_y;
+
+        yollar[8].x=current_x;//T
+        yollar[8].y=current_y;
+        outtextxy(yollar[8].x,yollar[8].y,"T");
+    }
+    current_x=getmaxx()/2;
+    settextstyle(9,HORIZ_DIR,2);
+    outtextxy(yollar[0].x,yollar[0].y,"A");
+    outtextxy(yollar[1].x,yollar[1].y,"B");
+    outtextxy(yollar[2].x,yollar[2].y,"C");
+    outtextxy(yollar[3].x,yollar[3].y,"D");
+    outtextxy(yollar[4].x,yollar[4].y,"W");
+    outtextxy(yollar[5].x,yollar[5].y,"X");
+    outtextxy(yollar[6].x,yollar[6].y,"Y");
+    outtextxy(yollar[7].x,yollar[7].y,"Z");
+}
+/*
+END OF  DRAW ROADS FUNCTIONS
+*/
+/*
+YON HAREKETLENDIRME FONKSIYONU
+*/
+void yon_hareketi(int x,int y,int hangisi)
+{
+    int maxx,maxy,ax,ay;
+    void *arrow;
+    unsigned int arsize;
+    ax=x;
+    ay=y-20;
+    maxy=ax+20;
+    maxx=ay+20;
+
+    /*
+    0 LEFT-RIGHT
+    1 RIGHT -LEFT
+    2 TOP-BOTTOM
+    3 BOTTOM-TOP
+    4 -RIGHTTOP
+    5 -LEFTBOTTOM
+    6 -LEFTTOP
+    7 -RIGHTBOTTOM
+    */
+    moveto(ax,ay);
+    /*
+    LEFT-RIGHT
+    */
+    int howlong=0;
+    if(hangisi==0)
+    {
+        while(howlong<=20)
+        {
+            linerel(ARROW_SIZE*(howlong%2),0);
+            delay(100);
+            howlong++;
+        }
+        linerel(-ARROW_SIZE,-ARROW_SIZE);
+        linerel(0,2*ARROW_SIZE);
+        linerel(ARROW_SIZE,-ARROW_SIZE);
+    }
+    /*
+    RIGHT-LEFT
+    */
+    else if(hangisi==1)
+    {
+        while(howlong<=20)
+        {
+            linerel(-ARROW_SIZE*(howlong%2),0);
+            delay(100);
+            howlong++;
+        }
+        //linerel(-ARROW_SIZE*4,0);
+        linerel(2*ARROW_SIZE,-1*ARROW_SIZE);
+        linerel(0,2*ARROW_SIZE);
+        linerel(-2*ARROW_SIZE,-ARROW_SIZE);
+    }
+    /*
+    TOP-BOTTOM
+    */
+    else if(hangisi==2)
+    {
+        while(howlong<=20)
+        {
+            linerel(0,ARROW_SIZE*(howlong%2));
+            delay(100);
+            howlong++;
+        }
+        //linerel(0,ARROW_SIZE*4);
+        linerel(-1*ARROW_SIZE,-2*ARROW_SIZE);
+        linerel(2*ARROW_SIZE,0);
+        linerel(-ARROW_SIZE,2*ARROW_SIZE);
+    }
+    /*
+    BOTTOM-TOP
+    */
+    else if(hangisi==3)
+    {
+        while(howlong<=20)
+        {
+            linerel(0,-ARROW_SIZE*(howlong%2));
+            delay(100);
+            howlong++;
+        }
+        //linerel(0,-ARROW_SIZE*4);
+        linerel(-1*ARROW_SIZE,2*ARROW_SIZE);
+        linerel(2*ARROW_SIZE,0);
+        linerel(-ARROW_SIZE,-2*ARROW_SIZE);
+    }
+    /*
+    -RIGHTTOP
+    */
+    else if(hangisi==4)
+    {
+
+        ax=x-20;
+        ay=y+25;
+        moveto(ax,ay);
+        while(howlong<=20)
+        {
+            linerel(ARROW_SIZE*(howlong%2),-ARROW_SIZE*(howlong%2));
+            delay(100);
+            howlong++;
+        }
+        //linerel(ARROW_SIZE*4,-ARROW_SIZE*4);
+        linerel(-1*ARROW_SIZE,0);
+        linerel(1*ARROW_SIZE,1*ARROW_SIZE);
+        linerel(0,-ARROW_SIZE);
+    }
+    /*
+    -LEFTBOTOM
+    */
+    else if(hangisi==5)
+    {
+        ax=x+20;
+        ay=y-25;
+        moveto(ax,ay);
+        while(howlong<=20)
+        {
+            linerel(-ARROW_SIZE*(howlong%2),ARROW_SIZE*(howlong%2));
+            delay(100);
+            howlong++;
+        }
+        //linerel(-ARROW_SIZE*4,ARROW_SIZE*4);
+        linerel(0,-1*ARROW_SIZE);
+        linerel(1*ARROW_SIZE,1*ARROW_SIZE);
+        linerel(-ARROW_SIZE,0);
+    }
+    /*
+    -RIGHTBOTTOM
+    */
+    else if(hangisi==6)
+    {
+        ax=x-10;
+        ay=y-35;
+        moveto(ax,ay);
+        while(howlong<=20)
+        {
+            linerel(ARROW_SIZE*(howlong%2),ARROW_SIZE*(howlong%2));
+            delay(100);
+            howlong++;
+        }
+        //linerel(ARROW_SIZE*4,ARROW_SIZE*4);
+        linerel(0,-1*ARROW_SIZE);
+        linerel(-1*ARROW_SIZE,1*ARROW_SIZE);
+        linerel(ARROW_SIZE,0);
+    }
+    /*
+    -LEFTTOP
+    */
+    else if(hangisi==7)
+    {
+        ax=x;
+        ay=y;
+        moveto(ax,ay);
+        while(howlong<=20)
+        {
+            linerel(-ARROW_SIZE*(howlong%2),-ARROW_SIZE*(howlong%2));
+            delay(100);
+            howlong++;
+        }
+        //linerel(-ARROW_SIZE*4,-ARROW_SIZE*4);
+        linerel(0,ARROW_SIZE);
+        linerel(ARROW_SIZE,-ARROW_SIZE);
+        linerel(-ARROW_SIZE,0);
+    }
+}
+/*
+END OF YON_HAREKETI
+*/
+/*
+DETERMINE WHAT KING OF MOVE THE ARROW WILL MAKE
+*/
+int hangihareket(int index,int direction)
+{
+    int hareketturu;
+    if(index==0)//ROAD A
+    {
+        if(direction==1)
+            hareketturu=0;//LEFT-TO-RIGHT
+        else
+            hareketturu=1;
+    }
+    if(index==1)//ROAD B
+    {
+        if(direction==1)
+            hareketturu=2;//TOP TO BOTTOM
+        else
+            hareketturu=3;
+    }
+    if(index==2)//ROAD C
+    {
+        if(direction==1)
+            hareketturu=1;//RIGHT TO LEFT
+        else
+            hareketturu=0;
+    }
+    if(index==3)//ROAD D
+    {
+        if(direction==1)
+            hareketturu=3;//BOTTOM TO TOP
+        else
+            hareketturu=2;
+    }
+    if(index==4)//ROAD W
+    {
+        if(direction==1)
+            hareketturu=4;//RIGHTTOP
+        else
+            hareketturu=5;
+    }
+    if(index==5)//ROAD X
+    {
+        if(direction==1)
+            hareketturu=6;//LEFTTOP
+        else
+            hareketturu=7;
+    }
+    if(index==6)//ROAD Y
+    {
+        if(direction==1)
+            hareketturu=5;//LEFTBOTTOM
+        else
+            hareketturu=4;
+    }
+    if(index==7)//ROAD Z
+    {
+        if(direction==3)
+            hareketturu=6;//RIGHTBOTTOM
+        else
+            hareketturu=7;
+    }
+    if(index==8)//ROAD T
+    {
+        if(direction==3)
+            hareketturu=0;//LEFT-TO-RIGHT
+        else
+            hareketturu=1;
+    }
+    return hareketturu;
+}
+/*
+END OF HAREKETTURU
+*/
