@@ -3,6 +3,8 @@
 #include<time.h>
 
 #define ARROW_SIZE 6
+
+//DUZENLEMEK LAZIM
 struct yol
 {
     int x,y;
