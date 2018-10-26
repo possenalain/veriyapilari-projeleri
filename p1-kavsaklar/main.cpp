@@ -1,5 +1,7 @@
 #include<graphics.h>
 #include<stdio.h>
+#include<time.h>
+
 #define ARROW_SIZE 5
 struct yol
 {
@@ -14,6 +16,7 @@ void sifirla_rows(int *rowdegisen,int *rowdegismeyen,int *right_b,int r1,int r2,
 void scale(int *row,int *right_b,int r,int number,int hangi);
 void yazdir(int *matris,int *b,int n);
 int hangihareket(int index,int direction);
+void harekete(int roads);
 int main()
 {
     /*
@@ -27,7 +30,7 @@ int main()
     int circle_x,circle_y,radius_o,radius_i;
     yoluciz(1);
     yoluciz(2);
-
+    srand((unsigned) time(NULL));
     int selected=0;
     while(!kbhit()||!selected)
     {
@@ -166,7 +169,8 @@ int main()
                 denklem[4][i]=-yogunluk;
             }
         }
-        yon_hareketi(yollar[i].x,yollar[i].y,hangihareket(i,choice));
+        yollar[i].hareket=hangihareket(i,choice);
+        yon_hareketi(yollar[i].x,yollar[i].y,yollar[i].hareket);
 //reset the values, for the next instantiation
         girisler=0;
         cikisler=0;
@@ -245,7 +249,8 @@ int main()
                     /*
                     SHOW IT'S MOVEMENT ACCORDINGLY
                     */
-                    yon_hareketi(yollar[i].x,yollar[i].y,hangihareket(i,(son-ilk)));
+                    yollar[i].hareket=hangihareket(i,son-ilk);
+                    yon_hareketi(yollar[i].x,yollar[i].y,yollar[i].hareket);
                     int n;
 //put the values in draft equation array with their directions effects
                     for(a=0; a<4; a++)
@@ -487,10 +492,17 @@ int main()
             printf("\b\b =  %d\n\n",b[t]);
         sign=' ';
     }
-//
+harekete(roads);
     getch();
+
     return 0;
+
+
 }
+/*
+
+
+*/
 /*
 function for swapping rows when necessary
 
@@ -755,8 +767,9 @@ void yon_hareketi(int x,int y,int hangisi)
     3 BOTTOM-TOP
     4 -RIGHTTOP
     5 -LEFTBOTTOM
-    6 -LEFTTOP
-    7 -RIGHTBOTTOM
+    6 -RIGHTBOTTOM
+    7 -LEFTTOP
+
     */
     moveto(ax,ay);
     /*
@@ -948,7 +961,7 @@ int hangihareket(int index,int direction)
     if(index==5)//ROAD X
     {
         if(direction==1)
-            hareketturu=6;//LEFTTOP
+            hareketturu=6;//RIGHTBOTTOM
         else
             hareketturu=7;
     }
@@ -968,7 +981,7 @@ int hangihareket(int index,int direction)
     }
     if(index==8)//ROAD T
     {
-        if(direction==3)
+        if(direction==2)
             hareketturu=0;//LEFT-TO-RIGHT
         else
             hareketturu=1;
@@ -977,4 +990,21 @@ int hangihareket(int index,int direction)
 }
 /*
 END OF HAREKETTURU
+*/
+
+/*
+SET ALL ON MOVE
+*/
+void harekete(int roads){
+int i;
+setcolor((rand()%8)+1);
+for(i=0;i<roads;i++){
+ yon_hareketi(yollar[i].x,yollar[i].y,yollar[i].hareket);
+}
+while(!kbhit()){
+    harekete(roads);
+}
+}
+/*
+HAREKETLE
 */
