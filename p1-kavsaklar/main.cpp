@@ -3,8 +3,6 @@
 #include<time.h>
 
 #define ARROW_SIZE 6
-
-//DUZENLEMEK LAZIM
 struct yol
 {
     int x,y;
@@ -662,6 +660,7 @@ void yoluciz(int kacinci)
         current_y=circle_y;
 
     }
+
     if(kacinci==3||kacinci==4)
     {   setfillstyle(SOLID_FILL,7);
         settextstyle(9,HORIZ_DIR,2);
@@ -727,6 +726,7 @@ void yoluciz(int kacinci)
 
     yollar[7].x=current_x-115;//Z
     yollar[7].y=current_y+115;
+
     if(kacinci==1)
     {
         bar((current_x-300),(current_y-50),(current_x-100),(current_y+50));//LEFT
@@ -761,6 +761,7 @@ void yoluciz(int kacinci)
     outtextxy(yollar[5].x,yollar[5].y,"X");
     outtextxy(yollar[6].x,yollar[6].y,"Y");
     outtextxy(yollar[7].x,yollar[7].y,"Z");
+    outtextxy(yollar[7].x,yollar[7].y,"Z");
 }
 /*
 END OF  DRAW ROADS FUNCTIONS
@@ -770,13 +771,11 @@ YON HAREKETLENDIRME FONKSIYONU
 */
 void yon_hareketi(int x,int y,int hangisi)
 {
-    int maxx,maxy,ax,ay;
+    int ax,ay;
     void *arrow;
     unsigned int arsize;
     ax=x;
     ay=y-20;
-    maxy=ax+20;
-    maxx=ay+20;
 
     /*
     0 LEFT-RIGHT
@@ -790,16 +789,22 @@ void yon_hareketi(int x,int y,int hangisi)
 
     */
     moveto(ax,ay);
+    int cro,pro;
+    cro=ax;
+    pro=ay;
     /*
     LEFT-RIGHT
     */
+setlinestyle(1,2,6);
     int howlong=0;
     if(hangisi==0)
     {
-        while(howlong<=20)
+       while(howlong<=20)
         {
             linerel(ARROW_SIZE*(howlong%2),0);
+            //outtextxy(cro,pro,">");
             delay(50);
+            //cro+=ARROW_SIZE*(howlong%2);
             howlong++;
         }
         linerel(-ARROW_SIZE,-ARROW_SIZE);
