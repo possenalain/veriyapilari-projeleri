@@ -496,23 +496,30 @@ int main()
     for(t=0; t<5; t++)
     {
         int buldum=0,name;
-        char sign=' ';
-        for(k=0; k<bilinmeyen_sayisi; k++)
+        int first=1;
+        for(k=0; k<=bilinmeyen_sayisi-1; k++)
         {
+            char sign=' ';
+            if(gauss_m[t][k]>0)
+                sign='+';
+            if(gauss_m[t][k]<0)
+                sign=' ';
+
             if(gauss_m[t][k]!=0)
             {
-                if(gauss_m[t][k]<0)
-                    sign=' ';
-
                 name=bilinmeyen[k];
-                printf("%d%c  %c ",gauss_m[t][k],names[name],sign);
-                sign='+';
+                printf("  %c",sign);
+                if(first){
+                    printf("\b\b\b");
+                    first=0;
+                }
+                printf(" %d%c",gauss_m[t][k],names[name]);
+                sign=' ';
                 buldum=1;
             }
         }
         if(buldum)
-            printf("\b\b =  %d\n\n",b[t]);
-        sign=' ';
+            printf("  =  %d\n\n",b[t]);
     }
     harekete(roads);
     getch();
@@ -662,7 +669,8 @@ void yoluciz(int kacinci)
     }
 
     if(kacinci==3||kacinci==4)
-    {   setfillstyle(SOLID_FILL,7);
+    {
+        setfillstyle(SOLID_FILL,7);
         settextstyle(9,HORIZ_DIR,2);
         circle_x=getmaxx()/2;
         circle_y=getmaxy()/2+50;
@@ -704,8 +712,9 @@ void yoluciz(int kacinci)
     radius_i=100;
     circle(circle_x,circle_y,radius_o);
     circle(circle_x,circle_y,radius_i);
-    if(kacinci==1||kacinci==2){
-    floodfill(circle_x+radius_i,(circle_y+radius_i),4);
+    if(kacinci==1||kacinci==2)
+    {
+        floodfill(circle_x+radius_i,(circle_y+radius_i),4);
     }
     bar((current_x-50),(current_y-300),(current_x+50),(current_y-100));//TOP
     yollar[1].x=current_x;
@@ -795,11 +804,11 @@ void yon_hareketi(int x,int y,int hangisi)
     /*
     LEFT-RIGHT
     */
-setlinestyle(1,2,6);
+    setlinestyle(1,2,6);
     int howlong=0;
     if(hangisi==0)
     {
-       while(howlong<=20)
+        while(howlong<=20)
         {
             linerel(ARROW_SIZE*(howlong%2),0);
             //outtextxy(cro,pro,">");
