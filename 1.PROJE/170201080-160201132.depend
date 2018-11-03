@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1540840495 source:c:\users\ndigande\desktop\170201080-160201132\main.cpp
+	<graphics.h>
+	<stdio.h>
+	<time.h>
+
