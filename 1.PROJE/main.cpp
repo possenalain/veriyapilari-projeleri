@@ -17,6 +17,8 @@ void scale(int *row,int *right_b,int r,int number,int hangi);
 void yazdir(int *matris,int *b,int n);
 int hangihareket(int index,int direction);
 void harekete(int roads);
+
+
 int main()
 {
     /*
@@ -781,8 +783,6 @@ YON HAREKETLENDIRME FONKSIYONU
 void yon_hareketi(int x,int y,int hangisi)
 {
     int ax,ay;
-    void *arrow;
-    unsigned int arsize;
     ax=x;
     ay=y-20;
 
