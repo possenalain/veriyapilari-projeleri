@@ -59,7 +59,7 @@ void L(struct eleman *devreelemanlar,int elemansayisi,string uc);
 void H(struct eleman *devreelemanlar,int elemansayisi,string uc);
 void S(struct kapi *devrekapilar,struct eleman *devreelemanlar);
 void kapiuygula(struct kapi kapieleman,struct eleman *devreelemanlar);
-void devrerun();
+
 void hkmtcalis(struct eleman *devreelemanlari,struct kapi *devrekapilari,string uclar,string komut,string Kbasi,char *kmt);
 
 void S(struct kapi *devrekapilar,struct eleman *devreelemanlar);
@@ -70,7 +70,109 @@ int main()
 
 
 
-    devrerun();
+    int i,len;
+    string komut="";
+    string Kbasi="";
+    string logkomutlari="";
+    string uclar="";
+
+    time_t kmttime;
+    char tmlog[50];
+    struct eleman devreelemanlari[15];
+    struct kapi devrekapilari[5];
+    if(active!=1)
+    {
+        Y(devreelemanlari,devrekapilari);
+        active=1;
+    }
+
+    while(strcasecmp(&komut[0],"Y")!=0)
+    {
+
+        if(strcasecmp(&komut[0],"")!=0)
+        {
+            cout<<"\nDEVRE YUKLENMEMIS\n";
+        }
+        if(strcasecmp(&komut[0],"K")==0)
+        {
+            devrekmt(devreelemanlari,devrekapilari);
+        }
+        cout<<"\n>";
+        cin>>komut;
+        if(strcasecmp(&komut[0],"C")==0)
+        {
+            exit(1);
+        }
+    }
+
+    kmttime=time(NULL);
+    sprintf(tmlog,"%s",ctime(&kmttime));
+    logkomutlari+=tmlog;
+    len=logkomutlari.length();
+    logkomutlari[len-1]='\t';
+    logkomutlari+="Y devre.txt";
+    writetolog(&logkomutlari[0]);
+
+
+    komut="";
+    logkomutlari="";
+    while(strcasecmp(&komut[0],"I")!=0)
+    {
+        if(strcasecmp(&komut[0],"")!=0)
+        {
+            cout<<"\nILKLENDIRME YAPILMAMIS\n";
+        }
+        if(strcasecmp(&komut[0],"K")==0)
+        {
+            devrekmt(devreelemanlari,devrekapilari);
+        }
+        cout<<"\n>";
+        cin>>komut;
+        if(strcasecmp(&komut[0],"C")==0)
+        {
+            exit(1);
+        }
+    }
+
+    I(devreelemanlari,giriscikis.length());
+    kmttime=time(NULL);
+    sprintf(tmlog,"%s",ctime(&kmttime));
+    logkomutlari+=tmlog;
+    len=logkomutlari.length();
+    logkomutlari[len-1]='\t';
+    logkomutlari+="I devre.txt";
+    writetolog(&logkomutlari[0]);
+    /*
+    KOMUTULARI ALALIM
+    */
+    logkomutlari="\n";
+    do
+    {
+        char kmt[255];
+        int len;
+        cout<<"\n>";
+        fgets(kmt,255,stdin);
+        komut=yorumlaricikar(kmt);
+        komut=trim(kmt);
+        if(strcasecmp(&komut[0],"")!=0)
+        {
+            Kbasi=komut.substr(0,findspace(komut));
+        }
+        else
+        {
+            continue;
+        }
+        if(strcasecmp(&komut[0],"K")==0)
+        {
+            devrekmt(devreelemanlari,devrekapilari);
+        }
+        else
+        {
+            hkmtcalis(devreelemanlari,devrekapilari,uclar,komut,Kbasi,kmt);
+        }
+
+    }
+    while(strcasecmp(&Kbasi[0],"C")!=0);
 
 
     return 0;
@@ -365,7 +467,8 @@ void  Y(struct eleman *devreelemanlar,struct kapi *devrekapi)
             devrekapi[i].giris[2]=' ';
         }
         else
-        {   cout<<kacgiris;
+        {
+            cout<<kacgiris;
             cout<<"\n\nverilimis girislerinde uyusmazlik var";
             exit(1);
         }
@@ -984,117 +1087,6 @@ void hkmtcalis(struct eleman *devreelemanlari,struct kapi *devrekapilari,string 
     logkomutlari="";
 
 }
-/*
-DEVRE RUN
-*/
-void devrerun()
-{
-    int i,len;
-    string komut="";
-    string Kbasi="";
-    string logkomutlari="";
-    string uclar="";
-
-    time_t kmttime;
-    char tmlog[50];
-    struct eleman devreelemanlari[15];
-    struct kapi devrekapilari[5];
-    if(active!=1)
-    {
-        Y(devreelemanlari,devrekapilari);
-        active=1;
-    }
-
-        while(strcasecmp(&komut[0],"Y")!=0)
-        {
-
-            if(strcasecmp(&komut[0],"")!=0)
-            {
-                cout<<"\nDEVRE YUKLENMEMIS\n";
-            }
-            if(strcasecmp(&komut[0],"K")==0)
-            {
-                devrekmt(devreelemanlari,devrekapilari);
-            }
-            cout<<"\n>";
-            cin>>komut;
-            if(strcasecmp(&komut[0],"C")==0)
-            {
-                exit(1);
-            }
-        }
-
-        kmttime=time(NULL);
-        sprintf(tmlog,"%s",ctime(&kmttime));
-        logkomutlari+=tmlog;
-        len=logkomutlari.length();
-        logkomutlari[len-1]='\t';
-        logkomutlari+="\tY devre.txt";
-        writetolog(&logkomutlari[0]);
-
-
-        komut="";
-        logkomutlari="";
-        while(strcasecmp(&komut[0],"I")!=0)
-        {
-            if(strcasecmp(&komut[0],"")!=0)
-            {
-                cout<<"\nILKLENDIRME YAPILMAMIS\n";
-            }
-            if(strcasecmp(&komut[0],"K")==0)
-            {
-                devrekmt(devreelemanlari,devrekapilari);
-            }
-            cout<<"\n>";
-            cin>>komut;
-            if(strcasecmp(&komut[0],"C")==0)
-            {
-                exit(1);
-            }
-        }
-
-        I(devreelemanlari,giriscikis.length());
-        kmttime=time(NULL);
-        sprintf(tmlog,"%s",ctime(&kmttime));
-        logkomutlari+=tmlog;
-        len=logkomutlari.length();
-        logkomutlari[len-1]='\t';
-        logkomutlari+="\tI devre.txt";
-        writetolog(&logkomutlari[0]);
-        /*
-        KOMUTULARI ALALIM
-        */
-        logkomutlari="\n";
-        do
-        {
-            char kmt[255];
-            int len;
-            cout<<"\n  >";
-            fgets(kmt,255,stdin);
-            komut=yorumlaricikar(kmt);
-            komut=trim(kmt);
-            if(strcasecmp(&komut[0],"")!=0)
-            {
-                Kbasi=komut.substr(0,findspace(komut));
-            }
-            else
-            {
-                continue;
-            }
-            if(strcasecmp(&komut[0],"K")==0)
-            {
-                devrekmt(devreelemanlari,devrekapilari);
-            }
-            else
-            {
-                hkmtcalis(devreelemanlari,devrekapilari,uclar,komut,Kbasi,kmt);
-            }
-
-        }
-        while(strcasecmp(&Kbasi[0],"C")!=0);
-
-}
-
 
 /*
 KOMUTLAR FROM DOSYA RUN
@@ -1186,10 +1178,6 @@ void devrekmt(struct eleman * devreelemanlari,struct kapi * devrekapilari)
         i++;
 
     }
-
-
-
-
 
 }
 
